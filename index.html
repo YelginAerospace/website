@@ -7,8 +7,10 @@
     <meta name="color-scheme" content="dark" />
 
     <meta name="robots" content="noindex, nofollow">
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/YelginAerospace/website/refs/heads/main/Varl%C4%B1k%2017.png">
-    
+    <link rel="icon" type="image/png"
+        href="https://raw.githubusercontent.com/YelginAerospace/website/refs/heads/main/Varl%C4%B1k%2017.png">
+    <link rel="manifest" href="manifest.json">
+
     <title>Yelgin Aerospace</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -276,10 +278,52 @@
                 opacity: 0;
             }
         }
+
+        /* --- LOADING SPINNER --- */
+        .loader-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loader-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--grid);
+            border-top-color: var(--cyan);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- Loading Spinner -->
+    <div class="loader-overlay" id="loader">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <noscript>
+        <div style="background:#05102B; color:#00F0FF; text-align:center; padding:40px; font-family:sans-serif;">
+            Bu sayfayı görüntülemek için JavaScript gereklidir.
+        </div>
+    </noscript>
     <main id="yelgin-mainframe" role="main" aria-label="Yelgin Aerospace durum ekranı">
         <div class="grid-layer" aria-hidden="true"></div>
         <div class="scanline-layer" aria-hidden="true"></div>
@@ -308,9 +352,9 @@
             </div>
         </div>
 
-        <div class="system-footer">
+        <footer class="system-footer">
             SYS.STATUS: NOMINAL &nbsp;|&nbsp; BURSA, TR &nbsp;|&nbsp; EST. 2025
-        </div>
+        </footer>
     </main>
 
     <!-- Three.js Library -->
@@ -349,15 +393,19 @@
 
         /* --- TELEMETRY DATA LOOP --- */
         function updateTelemetry() {
-            // Altitude
+            // Altitude (sınır: 20000 - 28000 FT)
             const alt = document.getElementById('tel-alt');
             let currentAlt = parseInt(alt.innerText);
-            alt.innerText = currentAlt + Math.floor(Math.random() * 20 - 10);
+            currentAlt = currentAlt + Math.floor(Math.random() * 20 - 10);
+            currentAlt = Math.max(20000, Math.min(28000, currentAlt));
+            alt.innerText = currentAlt;
 
-            // Speed
+            // Speed (sınır: 800 - 900 KM/H)
             const spd = document.getElementById('tel-spd');
             let currentSpd = parseInt(spd.innerText);
-            spd.innerText = currentSpd + Math.floor(Math.random() * 5 - 2);
+            currentSpd = currentSpd + Math.floor(Math.random() * 5 - 2);
+            currentSpd = Math.max(800, Math.min(900, currentSpd));
+            spd.innerText = currentSpd;
 
 
 
@@ -420,6 +468,14 @@
             mouseY = (event.clientY - window.innerHeight / 2) * 0.001;
         });
 
+        // Mobil dokunmatik destek
+        document.addEventListener('touchmove', (event) => {
+            if (event.touches.length > 0) {
+                mouseX = (event.touches[0].clientX - window.innerWidth / 2) * 0.002;
+                mouseY = (event.touches[0].clientY - window.innerHeight / 2) * 0.002;
+            }
+        });
+
         const clock = new THREE.Clock();
 
         function animate() {
@@ -439,6 +495,9 @@
         }
 
         animate();
+
+        // Loading spinner'ı gizle
+        document.getElementById('loader').classList.add('hidden');
 
         // Resize Handler
         window.addEventListener('resize', () => {
