@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-
     <link rel="icon" type="image/png" href="depo/corporate_identity/2_standart_logos/favicon.png">
 
     <style>
@@ -21,11 +20,11 @@
             --muted: #586385;
             --white: #ffffff;
             --danger: #ff3333;
+            --success: #00ff66;
         }
 
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             background-color: var(--bg);
             color: var(--white);
             font-family: 'Exo 2', sans-serif;
@@ -37,7 +36,7 @@
             background-size: 40px 40px;
         }
 
-        /* --- Header & Nav --- */
+        /* --- Header --- */
         .system-header {
             padding: 20px;
             border-bottom: 1px solid var(--cyan-dim);
@@ -47,121 +46,97 @@
             background: rgba(0,0,0,0.3);
             backdrop-filter: blur(5px);
             position: sticky;
-            top: 0;
-            z-index: 100;
+            top: 0; z-index: 100;
         }
 
         .brand-title {
-            color: var(--cyan);
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            color: var(--cyan); font-weight: 600; letter-spacing: 2px;
+            text-transform: uppercase; text-decoration: none;
+            display: flex; align-items: center; gap: 10px;
         }
-        
         .brand-title:hover { text-shadow: 0 0 10px var(--cyan); }
 
-        /* --- File Browser Container --- */
-        .container {
-            max-width: 1000px;
-            margin: 40px auto;
-            padding: 0 20px;
+        /* --- Stats Panel (New) --- */
+        .stats-bar {
+            display: flex; gap: 20px; font-size: 0.8rem; 
+            font-family: 'JetBrains Mono', monospace; color: var(--muted);
         }
+        .stat-item span { color: var(--cyan); }
 
-        /* --- Breadcrumb (Yol Göstergesi) --- */
-        #current-path {
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--muted);
+        /* --- Main Container --- */
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+
+        /* --- Search Bar (New) --- */
+        .search-container {
             margin-bottom: 20px;
-            font-size: 0.9rem;
+            border-bottom: 1px solid var(--cyan);
+            display: flex; align-items: center;
+        }
+        .search-input {
+            width: 100%; background: transparent; border: none;
+            color: var(--cyan); font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem; padding: 10px 0; outline: none;
+        }
+        .search-input::placeholder { color: var(--cyan-dim); }
+
+        /* --- Breadcrumb --- */
+        #current-path {
+            font-family: 'JetBrains Mono', monospace; color: var(--muted);
+            margin-bottom: 20px; font-size: 0.9rem;
         }
         #current-path span { color: var(--cyan); }
 
         /* --- File List --- */
         .file-list {
-            list-style: none;
-            padding: 0;
+            list-style: none; padding: 0;
             border: 1px solid var(--cyan-dim);
-            border-radius: 4px;
-            background: rgba(0, 0, 0, 0.4);
+            border-radius: 4px; background: rgba(0, 0, 0, 0.4);
         }
 
         .file-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; border-bottom: 1px solid rgba(0, 240, 255, 0.1);
             transition: all 0.2s ease;
         }
-
         .file-item:last-child { border-bottom: none; }
-        
-        .file-item:hover {
-            background: rgba(0, 240, 255, 0.05);
-            padding-left: 25px; /* Hover effect */
-        }
+        .file-item:hover { background: rgba(0, 240, 255, 0.05); padding-left: 25px; }
 
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-grow: 1;
-            cursor: pointer;
-        }
-
+        .file-info { display: flex; align-items: center; gap: 15px; flex-grow: 1; cursor: pointer; }
         .icon { font-size: 1.2rem; min-width: 25px; }
         
         .file-name {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.95rem;
-            color: var(--white);
-            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.95rem;
+            color: var(--white); text-decoration: none;
         }
 
-        .file-meta {
-            font-size: 0.8rem;
-            color: var(--muted);
-            min-width: 80px;
-            text-align: right;
+        .actions { display: flex; align-items: center; gap: 15px; }
+        .file-meta { font-size: 0.8rem; color: var(--muted); min-width: 70px; text-align: right; }
+        
+        /* Copy Button */
+        .copy-btn {
+            background: none; border: 1px solid var(--muted); color: var(--muted);
+            cursor: pointer; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;
+            transition: all 0.2s;
         }
+        .copy-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 
-        /* --- Klasör / Dosya Renkleri --- */
         .type-dir { color: var(--cyan); font-weight: bold; }
         .type-file { color: var(--white); }
         .back-btn { color: var(--danger); }
 
-        /* --- Loading & Error --- */
-        #status-msg {
-            text-align: center;
-            padding: 20px;
-            color: var(--muted);
-            font-style: italic;
-        }
-
-        /* --- Scanline Effect --- */
+        /* --- Loading & Scanline --- */
+        #status-msg { text-align: center; padding: 20px; color: var(--muted); font-style: italic; }
         .scanline {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: rgba(0, 240, 255, 0.3);
-            animation: scan 6s linear infinite;
-            pointer-events: none;
-            z-index: 999;
-            opacity: 0.5;
+            position: fixed; top: 0; left: 0; width: 100%; height: 2px;
+            background: rgba(0, 240, 255, 0.3); animation: scan 6s linear infinite;
+            pointer-events: none; z-index: 999; opacity: 0.5;
         }
-        @keyframes scan {
-            0% { transform: translateY(-10vh); }
-            100% { transform: translateY(110vh); }
-        }
+        @keyframes scan { 0% { transform: translateY(-10vh); } 100% { transform: translateY(110vh); } }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
     </style>
 </head>
 <body>
@@ -172,10 +147,19 @@
         <a href="index.html" class="brand-title">
             <span>◄ YELGIN AEROSPACE</span>
         </a>
-        <div style="font-size: 12px; letter-spacing: 2px; color: var(--muted);">SECURE STORAGE ACCESS</div>
+        
+        <div class="stats-bar">
+            <div class="stat-item">ITEMS: <span id="stat-count">0</span></div>
+            <div class="stat-item">SIZE: <span id="stat-size">0 KB</span></div>
+        </div>
     </header>
 
     <div class="container">
+        <div class="search-container">
+            <span style="color: var(--cyan); margin-right: 10px;">></span>
+            <input type="text" id="search-input" class="search-input" placeholder="Search_query..." autocomplete="off">
+        </div>
+
         <div id="current-path">ROOT / <span>depo</span></div>
 
         <ul id="file-list" class="file-list">
@@ -184,119 +168,178 @@
     </div>
 
     <script>
-        // --- KONFİGÜRASYON ---
+        // --- AYARLAR ---
         const USER = 'YelginAerospace';
         const REPO = 'website';
-        const ROOT_FOLDER = 'depo'; // Başlangıç klasörü
+        const ROOT_FOLDER = 'depo';
         
-        // Mevcut yol durumu
         let currentPath = ROOT_FOLDER;
+        let currentData = []; // Arama için veriyi hafızada tutuyoruz
 
-        // API'den veri çeken ana fonksiyon
+        // Formatlayıcılar
+        const formatSize = (bytes) => {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        };
+
+        // Ana Yükleme Fonksiyonu
         async function loadDirectory(path) {
             const listElement = document.getElementById('file-list');
             const statusElement = document.getElementById('status-msg');
             const pathDisplay = document.getElementById('current-path');
+            const searchInput = document.getElementById('search-input');
 
-            // UI Sıfırla
             listElement.innerHTML = '';
             statusElement.style.display = 'block';
             statusElement.textContent = 'Veri akışı sağlanıyor...';
-            statusElement.style.color = 'var(--muted)';
-            
-            // Path göstergesini güncelle
+            searchInput.value = ''; // Aramayı sıfırla
+
             pathDisplay.innerHTML = `ROOT / <span>${path}</span>`;
 
             const API_URL = `https://api.github.com/repos/${USER}/${REPO}/contents/${path}`;
 
             try {
                 const response = await fetch(API_URL);
-                if (!response.ok) throw new Error(`HTTP Hata: ${response.status}`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 
                 const data = await response.json();
-                statusElement.style.display = 'none'; // Yüklendi, mesajı gizle
+                statusElement.style.display = 'none';
 
-                // Eğer ana klasörde değilsek "Geri Dön" butonu ekle
-                if (path !== ROOT_FOLDER) {
-                    const parentPath = path.substring(0, path.lastIndexOf('/'));
-                    addListItem('..', 'parent', parentPath, 0);
-                }
-
-                // Önce klasörleri, sonra dosyaları sırala
-                data.sort((a, b) => {
+                // Veriyi globale kaydet (Arama için) ve Sırala
+                currentData = data.sort((a, b) => {
                     if (a.type === b.type) return a.name.localeCompare(b.name);
                     return a.type === 'dir' ? -1 : 1;
                 });
 
-                data.forEach(item => {
-                    addListItem(item.name, item.type, item.path, item.size, item.html_url, item.download_url);
-                });
+                // Parent directory butonu ekle (veriye dahil etmeden)
+                if (path !== ROOT_FOLDER) {
+                    const parentPath = path.substring(0, path.lastIndexOf('/'));
+                    renderItem({name: '..', type: 'parent', path: parentPath});
+                }
+
+                // Listeyi Çiz
+                renderList(currentData);
+                updateStats(currentData);
 
             } catch (error) {
                 console.error(error);
                 statusElement.style.display = 'block';
                 statusElement.style.color = 'var(--danger)';
-                statusElement.innerHTML = `BAĞLANTI HATASI: ${error.message}<br>API limiti dolmuş veya yol hatalı olabilir.`;
+                statusElement.innerHTML = `BAĞLANTI HATASI: ${error.message}`;
             }
         }
 
-        // Listeye eleman ekleyen yardımcı fonksiyon
-        function addListItem(name, type, path, size, htmlUrl, downloadUrl) {
+        // Listeyi Ekrana Basma
+        function renderList(data) {
+            const listElement = document.getElementById('file-list');
+            
+            data.forEach(item => {
+                renderItem(item);
+            });
+
+            if (data.length === 0) {
+                listElement.innerHTML += '<li style="padding:20px; color:var(--muted); text-align:center;">Sonuç bulunamadı.</li>';
+            }
+        }
+
+        // Tekil Eleman Render
+        function renderItem(item) {
             const listElement = document.getElementById('file-list');
             const li = document.createElement('li');
             li.className = 'file-item';
 
             let icon = '📄';
-            let action = '';
-            let sizeText = '';
             let metaClass = 'type-file';
+            let sizeText = item.size ? formatSize(item.size) : '';
+            let clickAction = '';
 
-            if (type === 'dir') {
+            // Klasör
+            if (item.type === 'dir') {
                 icon = '📂';
                 metaClass = 'type-dir';
                 sizeText = 'DIR';
-                // Klasöre tıklayınca fonksiyonu tekrar çağır (Recursive)
-                li.onclick = () => {
-                    currentPath = path;
-                    loadDirectory(path);
-                };
+                clickAction = `currentPath = '${item.path}'; loadDirectory('${item.path}')`;
             } 
-            else if (type === 'parent') {
+            // Üst Dizin
+            else if (item.type === 'parent') {
                 icon = '⤴';
-                name = 'Üst Dizin'; // [..] yerine daha şık
+                item.name = 'Üst Dizin';
                 metaClass = 'back-btn';
-                li.style.borderBottom = "1px solid var(--cyan)"; // Ayırıcı çizgi
-                li.onclick = () => {
-                    currentPath = path;
-                    loadDirectory(path);
-                };
-            }
+                li.style.borderBottom = "1px solid var(--cyan)";
+                clickAction = `currentPath = '${item.path}'; loadDirectory('${item.path}')`;
+            } 
+            // Dosya
             else {
-                // Dosya ise boyutu hesapla
-                sizeText = size > 1024 * 1024 
-                    ? (size / (1024 * 1024)).toFixed(2) + ' MB'
-                    : (size / 1024).toFixed(1) + ' KB';
-                
-                // Dosyaya tıklayınca yeni sekmede aç
-                li.onclick = () => {
-                    window.open(downloadUrl || htmlUrl, '_blank');
-                };
+                clickAction = `window.open('${item.download_url || item.html_url}', '_blank')`;
+            }
+
+            // Copy Link Butonu (Sadece dosyalar için)
+            let copyBtn = '';
+            if (item.type === 'file') {
+                copyBtn = `<button class="copy-btn" onclick="copyLink(event, '${item.download_url}')">LINK</button>`;
             }
 
             li.innerHTML = `
-                <div class="file-info">
+                <div class="file-info" onclick="${clickAction}">
                     <span class="icon">${icon}</span>
-                    <span class="file-name ${metaClass}">${name}</span>
+                    <span class="file-name ${metaClass}">${item.name}</span>
                 </div>
-                <div class="file-meta">${sizeText}</div>
+                <div class="actions">
+                    ${copyBtn}
+                    <div class="file-meta">${sizeText}</div>
+                </div>
             `;
-
             listElement.appendChild(li);
         }
 
-        // Başlangıçta çalıştır
-        loadDirectory(ROOT_FOLDER);
+        // Arama Fonksiyonu
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const listElement = document.getElementById('file-list');
+            listElement.innerHTML = ''; // Temizle
 
+            // Eğer üst dizin butonu gerekiyorsa tekrar ekle
+            if (currentPath !== ROOT_FOLDER) {
+                const parentPath = currentPath.substring(0, currentPath.lastIndexOf('/'));
+                renderItem({name: '..', type: 'parent', path: parentPath});
+            }
+
+            // Filtrele ve Çiz
+            const filtered = currentData.filter(item => item.name.toLowerCase().includes(query));
+            renderList(filtered);
+        });
+
+        // İstatistikleri Güncelle
+        function updateStats(data) {
+            const fileCount = data.filter(i => i.type === 'file').length;
+            const totalSize = data.reduce((acc, curr) => acc + (curr.size || 0), 0);
+            
+            document.getElementById('stat-count').innerText = fileCount;
+            document.getElementById('stat-size').innerText = formatSize(totalSize);
+        }
+
+        // Link Kopyalama
+        function copyLink(e, url) {
+            e.stopPropagation(); // Satıra tıklamayı engelle
+            navigator.clipboard.writeText(url).then(() => {
+                const btn = e.target;
+                const originalText = btn.innerText;
+                btn.innerText = 'OK';
+                btn.style.borderColor = 'var(--success)';
+                btn.style.color = 'var(--success)';
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.borderColor = '';
+                    btn.style.color = '';
+                }, 1500);
+            });
+        }
+
+        // Başlat
+        loadDirectory(ROOT_FOLDER);
     </script>
 </body>
 </html>
