@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yelgin Aerospace - Dosya Deposu</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; background: #f4f4f4; }
+        h1 { border-bottom: 2px solid #333; padding-bottom: 10px; }
+        #file-list { list-style: none; padding: 0; }
+        .file-item { 
+            background: white; 
+            margin: 10px 0; 
+            padding: 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
+        .file-item a { text-decoration: none; color: #007bff; font-weight: bold; }
+        .file-item a:hover { text-decoration: underline; }
+        .file-size { color: #666; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+    <h1>📂 Açık Depo Alanı</h1>
+    <p>Buradaki dosyalar GitHub repomdan otomatik çekilmektedir.</p>
+    
+    <ul id="file-list">
+        <li>Yükleniyor...</li>
+    </ul>
+
+    <script>
+        // AYARLAR
+        const USER = 'YelginAerospace';
+        const REPO = 'website';
+        const FOLDER = 'depo'; // Repodaki klasör adı
+
+        // GitHub API URL'si
+        const API_URL = `https://api.github.com/repos/${USER}/${REPO}/contents/${FOLDER}`;
+
+        async function listFiles() {
+            const listElement = document.getElementById('file-list');
+            
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Klasör bulunamadı veya API hatası.');
+                
+                const data = await response.json();
+                
+                // Listeyi temizle
+                listElement.innerHTML = '';
+
+                data.forEach(file => {
+                    // Sadece dosyaları listele (klasörleri atla)
+                    if (file.type === 'file') {
+                        const li = document.createElement('li');
+                        li.className = 'file-item';
+                        
+                        // Dosya boyutunu KB/MB çevir
+                        const size = file.size > 1024 * 1024 
+                            ? (file.size / (1024 * 1024)).toFixed(2) + ' MB'
+                            : (file.size / 1024).toFixed(2) + ' KB';
+
+                        // İndirme Linki (Raw content veya GitHub sayfası)
+                        // download_url direkt dosyayı indirir.
+                        li.innerHTML = `
+                            <a href="${file.download_url}" target="_blank">📄 ${file.name}</a>
+                            <span class="file-size">${size}</span>
+                        `;
+                        listElement.appendChild(li);
+                    }
+                });
+
+                if (data.length === 0) {
+                    listElement.innerHTML = '<li>Klasör boş.</li>';
+                }
+
+            } catch (error) {
+                console.error(error);
+                listElement.innerHTML = `<li style="color:red;">Hata: Dosyalar çekilemedi. (${error.message})</li>`;
+            }
+        }
+
+        // Sayfa açılınca çalıştır
+        listFiles();
+    </script>
+
+</body>
+</html>
