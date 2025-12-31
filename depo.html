@@ -3,90 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yelgin Aerospace - Dosya Deposu</title>
+    <title>Yelgin Aerospace | Veri Deposu</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="depo/corporate_identity/2_standart_logos/favicon.png">
+
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; background: #f4f4f4; }
-        h1 { border-bottom: 2px solid #333; padding-bottom: 10px; }
-        #file-list { list-style: none; padding: 0; }
-        .file-item { 
-            background: white; 
-            margin: 10px 0; 
-            padding: 15px; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
+        :root {
+            --bg: #05102B;
+            --panel: rgba(5, 16, 43, 0.95);
+            --cyan: rgba(0, 240, 255, 1);
+            --cyan-dim: rgba(0, 240, 255, 0.3);
+            --grid: rgba(0, 240, 255, 0.05);
+            --muted: #586385;
+            --white: #ffffff;
+            --danger: #ff3333;
         }
-        .file-item a { text-decoration: none; color: #007bff; font-weight: bold; }
-        .file-item a:hover { text-decoration: underline; }
-        .file-size { color: #666; font-size: 0.9em; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: var(--white);
+            font-family: 'Exo 2', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image:
+                linear-gradient(var(--grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* --- Header & Nav --- */
+        .system-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--cyan-dim);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-title {
+            color: var(--cyan);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .brand-title:hover { text-shadow: 0 0 10px var(--cyan); }
+
+        /* --- File Browser Container --- */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* --- Breadcrumb (Yol Göstergesi) --- */
+        #current-path {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--muted);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        #current-path span { color: var(--cyan); }
+
+        /* --- File List --- */
+        .file-list {
+            list-style: none;
+            padding: 0;
+            border: 1px solid var(--cyan-dim);
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .file-item:last-child { border-bottom: none; }
+        
+        .file-item:hover {
+            background: rgba(0, 240, 255, 0.05);
+            padding-left: 25px; /* Hover effect */
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-grow: 1;
+            cursor: pointer;
+        }
+
+        .icon { font-size: 1.2rem; min-width: 25px; }
+        
+        .file-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .file-meta {
+            font-size: 0.8rem;
+            color: var(--muted);
+            min-width: 80px;
+            text-align: right;
+        }
+
+        /* --- Klasör / Dosya Renkleri --- */
+        .type-dir { color: var(--cyan); font-weight: bold; }
+        .type-file { color: var(--white); }
+        .back-btn { color: var(--danger); }
+
+        /* --- Loading & Error --- */
+        #status-msg {
+            text-align: center;
+            padding: 20px;
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        /* --- Scanline Effect --- */
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: rgba(0, 240, 255, 0.3);
+            animation: scan 6s linear infinite;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.5;
+        }
+        @keyframes scan {
+            0% { transform: translateY(-10vh); }
+            100% { transform: translateY(110vh); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
     </style>
 </head>
 <body>
 
-    <h1>📂 Açık Depo Alanı</h1>
-    <p>Buradaki dosyalar GitHub repomdan otomatik çekilmektedir.</p>
-    
-    <ul id="file-list">
-        <li>Yükleniyor...</li>
-    </ul>
+    <div class="scanline"></div>
+
+    <header class="system-header">
+        <a href="index.html" class="brand-title">
+            <span>◄ YELGIN AEROSPACE</span>
+        </a>
+        <div style="font-size: 12px; letter-spacing: 2px; color: var(--muted);">SECURE STORAGE ACCESS</div>
+    </header>
+
+    <div class="container">
+        <div id="current-path">ROOT / <span>depo</span></div>
+
+        <ul id="file-list" class="file-list">
+            </ul>
+        <div id="status-msg">Sistem verileri çekiliyor...</div>
+    </div>
 
     <script>
-        // AYARLAR
+        // --- KONFİGÜRASYON ---
         const USER = 'YelginAerospace';
         const REPO = 'website';
-        const FOLDER = 'depo'; // Repodaki klasör adı
+        const ROOT_FOLDER = 'depo'; // Başlangıç klasörü
+        
+        // Mevcut yol durumu
+        let currentPath = ROOT_FOLDER;
 
-        // GitHub API URL'si
-        const API_URL = `https://api.github.com/repos/${USER}/${REPO}/contents/${FOLDER}`;
-
-        async function listFiles() {
+        // API'den veri çeken ana fonksiyon
+        async function loadDirectory(path) {
             const listElement = document.getElementById('file-list');
+            const statusElement = document.getElementById('status-msg');
+            const pathDisplay = document.getElementById('current-path');
+
+            // UI Sıfırla
+            listElement.innerHTML = '';
+            statusElement.style.display = 'block';
+            statusElement.textContent = 'Veri akışı sağlanıyor...';
+            statusElement.style.color = 'var(--muted)';
             
+            // Path göstergesini güncelle
+            pathDisplay.innerHTML = `ROOT / <span>${path}</span>`;
+
+            const API_URL = `https://api.github.com/repos/${USER}/${REPO}/contents/${path}`;
+
             try {
                 const response = await fetch(API_URL);
-                if (!response.ok) throw new Error('Klasör bulunamadı veya API hatası.');
+                if (!response.ok) throw new Error(`HTTP Hata: ${response.status}`);
                 
                 const data = await response.json();
-                
-                // Listeyi temizle
-                listElement.innerHTML = '';
+                statusElement.style.display = 'none'; // Yüklendi, mesajı gizle
 
-                data.forEach(file => {
-                    // Sadece dosyaları listele (klasörleri atla)
-                    if (file.type === 'file') {
-                        const li = document.createElement('li');
-                        li.className = 'file-item';
-                        
-                        // Dosya boyutunu KB/MB çevir
-                        const size = file.size > 1024 * 1024 
-                            ? (file.size / (1024 * 1024)).toFixed(2) + ' MB'
-                            : (file.size / 1024).toFixed(2) + ' KB';
+                // Eğer ana klasörde değilsek "Geri Dön" butonu ekle
+                if (path !== ROOT_FOLDER) {
+                    const parentPath = path.substring(0, path.lastIndexOf('/'));
+                    addListItem('..', 'parent', parentPath, 0);
+                }
 
-                        // İndirme Linki (Raw content veya GitHub sayfası)
-                        // download_url direkt dosyayı indirir.
-                        li.innerHTML = `
-                            <a href="${file.download_url}" target="_blank">📄 ${file.name}</a>
-                            <span class="file-size">${size}</span>
-                        `;
-                        listElement.appendChild(li);
-                    }
+                // Önce klasörleri, sonra dosyaları sırala
+                data.sort((a, b) => {
+                    if (a.type === b.type) return a.name.localeCompare(b.name);
+                    return a.type === 'dir' ? -1 : 1;
                 });
 
-                if (data.length === 0) {
-                    listElement.innerHTML = '<li>Klasör boş.</li>';
-                }
+                data.forEach(item => {
+                    addListItem(item.name, item.type, item.path, item.size, item.html_url, item.download_url);
+                });
 
             } catch (error) {
                 console.error(error);
-                listElement.innerHTML = `<li style="color:red;">Hata: Dosyalar çekilemedi. (${error.message})</li>`;
+                statusElement.style.display = 'block';
+                statusElement.style.color = 'var(--danger)';
+                statusElement.innerHTML = `BAĞLANTI HATASI: ${error.message}<br>API limiti dolmuş veya yol hatalı olabilir.`;
             }
         }
 
-        // Sayfa açılınca çalıştır
-        listFiles();
-    </script>
+        // Listeye eleman ekleyen yardımcı fonksiyon
+        function addListItem(name, type, path, size, htmlUrl, downloadUrl) {
+            const listElement = document.getElementById('file-list');
+            const li = document.createElement('li');
+            li.className = 'file-item';
 
+            let icon = '📄';
+            let action = '';
+            let sizeText = '';
+            let metaClass = 'type-file';
+
+            if (type === 'dir') {
+                icon = '📂';
+                metaClass = 'type-dir';
+                sizeText = 'DIR';
+                // Klasöre tıklayınca fonksiyonu tekrar çağır (Recursive)
+                li.onclick = () => {
+                    currentPath = path;
+                    loadDirectory(path);
+                };
+            } 
+            else if (type === 'parent') {
+                icon = '⤴';
+                name = 'Üst Dizin'; // [..] yerine daha şık
+                metaClass = 'back-btn';
+                li.style.borderBottom = "1px solid var(--cyan)"; // Ayırıcı çizgi
+                li.onclick = () => {
+                    currentPath = path;
+                    loadDirectory(path);
+                };
+            }
+            else {
+                // Dosya ise boyutu hesapla
+                sizeText = size > 1024 * 1024 
+                    ? (size / (1024 * 1024)).toFixed(2) + ' MB'
+                    : (size / 1024).toFixed(1) + ' KB';
+                
+                // Dosyaya tıklayınca yeni sekmede aç
+                li.onclick = () => {
+                    window.open(downloadUrl || htmlUrl, '_blank');
+                };
+            }
+
+            li.innerHTML = `
+                <div class="file-info">
+                    <span class="icon">${icon}</span>
+                    <span class="file-name ${metaClass}">${name}</span>
+                </div>
+                <div class="file-meta">${sizeText}</div>
+            `;
+
+            listElement.appendChild(li);
+        }
+
+        // Başlangıçta çalıştır
+        loadDirectory(ROOT_FOLDER);
+
+    </script>
 </body>
 </html>
